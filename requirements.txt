@@ -1,0 +1,11 @@
+# MCP (Model Context Protocol) — server framework for exposing tools and resources to Claude
+mcp>=1.0
+
+# httpx — async HTTP client used for all ArcGIS REST API calls
+httpx>=0.27
+
+# pydantic — data validation and settings management for config and feature models
+pydantic>=2.0
+
+# python-dotenv — loads ESRI_SERVER_URL, ESRI_USERNAME, ESRI_PASSWORD from a .env file
+python-dotenv>=1.0
