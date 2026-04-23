@@ -9,3 +9,9 @@ pydantic>=2.0
 
 # python-dotenv — loads ESRI_SERVER_URL, ESRI_USERNAME, ESRI_PASSWORD from a .env file
 python-dotenv>=1.0
+
+# starlette — ASGI web framework used to host the SSE and POST message endpoints
+starlette>=0.40
+
+# uvicorn — ASGI server that runs the Starlette app for HTTP/SSE transport
+uvicorn>=0.30

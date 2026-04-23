@@ -1,17 +1,20 @@
 """MCP server entry point — tools and resources for ArcGIS Feature Services."""
 from __future__ import annotations
 
-import asyncio
 import json
-from urllib.parse import quote, unquote
+from urllib.parse import unquote
 
+import uvicorn
 from mcp.server import Server
-from mcp.server.stdio import stdio_server
+from mcp.server.sse import SseServerTransport
 from mcp.types import (
     Resource,
     TextContent,
     Tool,
 )
+from starlette.applications import Starlette
+from starlette.requests import Request
+from starlette.routing import Mount, Route
 
 import esri_mcp.feature_service as fs
 from .config import config
@@ -224,11 +227,28 @@ async def _dispatch(name: str, args: dict):
 
 
 def main() -> None:
-    async def _run():
-        async with stdio_server() as (read_stream, write_stream):
-            await app.run(read_stream, write_stream, app.create_initialization_options())
+    sse = SseServerTransport("/messages/")
 
-    asyncio.run(_run())
+    async def handle_sse(request: Request):
+        async with sse.connect_sse(
+            request.scope, request.receive, request._send
+        ) as streams:
+            await app.run(streams[0], streams[1], app.create_initialization_options())
+
+    starlette_app = Starlette(
+        routes=[
+            Route("/sse", endpoint=handle_sse),
+            Mount("/messages/", app=sse.handle_post_message),
+        ]
+    )
+
+    uvicorn.run(
+        starlette_app,
+        host=config.host,
+        port=config.port,
+        ssl_certfile=config.ssl_certfile,
+        ssl_keyfile=config.ssl_keyfile,
+    )
 
 
 if __name__ == "__main__":

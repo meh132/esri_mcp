@@ -13,6 +13,14 @@ class Config:
         self._server_url = os.getenv("ESRI_SERVER_URL", "https://boston.maps.arcgis.com").rstrip("/")
         self.username = os.getenv("ESRI_USERNAME") or None
         self.password = os.getenv("ESRI_PASSWORD") or None
+        self.host = os.getenv("MCP_HOST", "0.0.0.0")
+        self.port = int(os.getenv("MCP_PORT", "8000"))
+        self.ssl_certfile = os.getenv("MCP_SSL_CERTFILE") or None
+        self.ssl_keyfile = os.getenv("MCP_SSL_KEYFILE") or None
+
+    @property
+    def ssl_enabled(self) -> bool:
+        return bool(self.ssl_certfile and self.ssl_keyfile)
 
     @property
     def server_url(self) -> str:

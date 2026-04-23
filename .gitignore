@@ -19,6 +19,9 @@ env/
 .env
 .env.*
 
+# SSL certificates
+certs/
+
 # Tools
 .hatch/
 .mypy_cache/
